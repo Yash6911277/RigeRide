@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RageRide</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #111; }
+    #gameCanvas {
+      background: url('https://i.imgur.com/URpEbId.png'); /* road image */
+      background-repeat: repeat-y;
+      background-size: cover;
+      display: block;
+      margin: auto;
+      border: 2px solid #f00;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const car = {
+      x: 175,
+      y: 500,
+      width: 50,
+      height: 100,
+      speed: 5,
+      boost: false
+    };
+
+    let keys = {};
+    let roadOffset = 0;
+
+    document.addEventListener("keydown", (e) => keys[e.key] = true);
+    document.addEventListener("keyup", (e) => keys[e.key] = false);
+
+    function drawCar() {
+      ctx.fillStyle = "#f00";
+      ctx.fillRect(car.x, car.y, car.width, car.height);
+    }
+
+    function update() {
+      if (keys['ArrowLeft'] && car.x > 0) car.x -= car.speed;
+      if (keys['ArrowRight'] && car.x < canvas.width - car.width) car.x += car.speed;
+      if (keys['ArrowUp'] && car.y > 0) car.y -= car.speed;
+      if (keys['ArrowDown'] && car.y < canvas.height - car.height) car.y += car.speed;
+      if (keys[' ']) car.boost = true; else car.boost = false;
+
+      roadOffset += car.boost ? 10 : 5;
+      canvas.style.backgroundPositionY = `${-roadOffset}px`;
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      update();
+      drawCar();
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>
